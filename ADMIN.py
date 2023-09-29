@@ -7,7 +7,6 @@ dbs= client.list_database_names()
 auth_db=client.Authorization
 admincl=auth_db.Admin
 
-
 def add_admin(pname,ploc,pwd,pslot):  
     doc={
         "pname":pname,
