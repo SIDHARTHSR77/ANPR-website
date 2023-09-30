@@ -56,6 +56,7 @@ def remove_val(nplate):
     ent_time=datetime.strftime(rem_list[0],"%H:%M:%S")
     #hr_rate=rem_time-ent_time
     st.write("Entry time:" + ent_time)
+    
     st.write("Remove Time:" + rem_time)
     bill()
 
