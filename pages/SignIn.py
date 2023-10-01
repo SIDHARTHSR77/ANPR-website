@@ -46,10 +46,7 @@ def user_disp():
     auth_db=client.Authorization
     admincl=auth_db.Admin
 
-    park_db=client.Parking_Loc
-    cbecl=park_db.coimbatore
-
-
+    
     username=" "
     _loc_list=[]
     _name_list=[]
@@ -63,9 +60,7 @@ def user_disp():
         #print(loc_list)
 
         cur_loc=st.selectbox("Select Location For Parking",loc_list)
-        cloc=st.button("Confirm Location")
-        if(cloc):
-            st.write("Welcome to " + cur_loc)
+        
 
         loc_find=admincl.find({"ploc":cur_loc})
         for li in loc_find:
@@ -74,9 +69,6 @@ def user_disp():
         #print(name_list)
 
         cur_pname=st.selectbox("Select Name of Parking",name_list)
-        cpname=st.button("Confirm Parking Name")
-        if(cpname):
-            st.write("Welcome to " + cur_pname)
         return cur_loc,cur_pname
 
     _slot_list=[]
@@ -87,13 +79,15 @@ def user_disp():
         slot_list=list(set(_slot_list))
         #print(slot_list)
         st.success("Total = " + str(slot_list[0]))
-        if(cur_loc=="Coimbatore" and cur_pname=="Indian"):
-            fillslots=cbecl.count_documents(filter={})
-            num=_slot_list[0]-fillslots
-            if(num<5):
-                st.error(str(num) + " Slots Remaining")
-            else:
-                st.success(str(num) + " Slots Remaining")
+        park_db=client[cur_loc]
+        cbecl=park_db[cur_pname]
+        
+        fillslots=cbecl.count_documents(filter={"rem_time":" "})
+        num=_slot_list[0]-fillslots
+        if(num<5):
+            st.error(str(num) + " Slots Remaining")
+        else:
+            st.success(str(num) + " Slots Remaining")
 
     
     cur_loc,cur_pname=park_loc()
@@ -109,7 +103,7 @@ def admin():
     admincl=auth_db.Admin
 
 
-    with st.form(key="signin",clear_on_submit=True):
+    with st.form(key="signin",clear_on_submit=False):
         ploc=st.text_input(":blue[Parking Location]",placeholder="Enter Parking Location")
         pname=st.text_input(":blue[Parking Name]",placeholder="Enter Parking Name")
         pwd=st.text_input(":blue[Password]",type="password",placeholder="Enter Password")
@@ -159,7 +153,8 @@ def admin_dsip(ploc,pname):
         doc={
             "nplate":nplate,
             "time":time,
-            "date":date
+            "date":date,
+            "rem_time":" "
         }
         nplate_exist=cbecl.find_one({"nplate":nplate})
         if(nplate_exist):
@@ -176,13 +171,14 @@ def admin_dsip(ploc,pname):
         for i in rplate:
             _rem_list=[i[key]for key in get_list]
         rem_list=list(set(_rem_list))
-        #cbecl.delete_one({"nplate":rem_list[1]})
+        #cbecl.delete_one({"nplate":rem_list[0]})
         st.success("Removed " + str(rem_list[0]))
 
         rem_time=datetime.now().strftime("%H:%M:%S")
         ent_time=datetime.strftime(rem_list[1],"%H:%M:%S")
         ent=ent_time.split(":")
         rem=rem_time.split(":")
+        cbecl.update_one({"nplate":rem_list[0]},{"$set":{"rem_time":rem_time}})
         if(ent[0]==rem[0]):
             st.success("Bill Amount "+str(bill)+"₹")
         else:
@@ -207,7 +203,7 @@ def auth():
     authcl=auth_db.Authority
 
 
-    with st.form(key="signin",clear_on_submit=True):
+    with st.form(key="signin",clear_on_submit=False):
         pid=st.text_input(":blue[Police ID]",placeholder="Enter Police ID")
         pwd=st.text_input(":blue[Password]",type="password",placeholder="Enter Password")
         st.form_submit_button()

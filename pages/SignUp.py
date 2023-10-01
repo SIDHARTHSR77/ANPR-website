@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 import os
 from pymongo import MongoClient                      
 
-st.set_page_config(page_title="Sign Up",page_icon="✅")
+st.set_page_config(page_title="Sign Up",page_icon="✅",initial_sidebar_state="collapsed")
 selected=option_menu(
     menu_title="Sign up to Role",
     options=["User","Admin","Authority"],
@@ -45,7 +45,7 @@ def admin():
     int_range=range(0,1000,10)
     _loc_list=[]
     def admin_sign_up(sign_up):
-        with st.form(key='signup',clear_on_submit=True):
+        with st.form(key='signup'):
             st.subheader(':green[Admin Sign Up]')
             pname = st.text_input(':blue[Parking Name]', placeholder='Enter The Name of Your Parking')
             ploc = st.text_input(':blue[Parking Location]', placeholder='Enter Location of The Parking')
@@ -96,7 +96,7 @@ def user():
         
 
     def user_sign_up():
-        with st.form(key='signup',clear_on_submit=True):
+        with st.form(key='signup',clear_on_submit=False):
             st.subheader(':green[User Sign Up]')
             email = st.text_input(':blue[Email]', placeholder='Enter Your Email')
             username = st.text_input(':blue[Username]', placeholder='Enter Your Username')
@@ -145,7 +145,7 @@ def auth():
 
     username=" "
     def auth_sign_up():
-        with st.form(key='signup',clear_on_submit=True):
+        with st.form(key='signup',clear_on_submit=False):
             st.subheader(':green[Authority Sign Up]')
             pid = st.text_input(':blue[Police ID]', placeholder='Enter Your Police ID')
             pwd = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
